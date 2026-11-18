@@ -1,0 +1,28 @@
+name: daily-forecast
+on:
+  schedule:
+    - cron: "30 14 * * *"      # 20:00 IST every day (Agmarknet updates through the day)
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Fetch -> retrain -> forecast
+        env:
+          DATA_GOV_API_KEY: ${{ secrets.DATA_GOV_API_KEY }}
+        run: python -m src.run_daily --no-tune
+      - name: Commit data and forecasts
+        run: |
+          git config user.name  "forecast-bot"
+          git config user.email "forecast-bot@users.noreply.github.com"
+          git add data/raw output models
+          git diff --staged --quiet || git commit -m "daily update $(date -u +%F)"
+          git push

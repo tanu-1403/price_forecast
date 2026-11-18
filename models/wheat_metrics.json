@@ -1,0 +1,39 @@
+{
+  "trained_through": "2026-11-17",
+  "model": "xgboost",
+  "params": {
+    "max_depth": 2,
+    "n_estimators": 200
+  },
+  "sigma_1d": 0.02086,
+  "backtest": {
+    "h1": {
+      "model_mape": 1.57,
+      "naive_mape": 1.62,
+      "model_mae": 53.1,
+      "naive_mae": 55.2,
+      "n": 26
+    },
+    "h3": {
+      "model_mape": 2.14,
+      "naive_mape": 2.66,
+      "model_mae": 72.0,
+      "naive_mae": 89.8,
+      "n": 26
+    },
+    "h7": {
+      "model_mape": 2.21,
+      "naive_mape": 2.46,
+      "model_mae": 74.3,
+      "naive_mae": 82.8,
+      "n": 26
+    },
+    "h14": {
+      "model_mape": 2.63,
+      "naive_mape": 2.26,
+      "model_mae": 89.9,
+      "naive_mae": 76.6,
+      "n": 26
+    }
+  }
+}
