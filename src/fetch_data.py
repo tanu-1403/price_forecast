@@ -102,7 +102,7 @@ def main():
         import_csv(args.import_csv, keys[0])
         return
 
-    api_key = os.getenv("DATA_GOV_API_KEY")
+    api_key = os.getenv("579b464db66ec23bdd000001f5961e2a74914c76781b5b89945bb5af")
     if not api_key:
         sys.exit("Set DATA_GOV_API_KEY (free key from https://data.gov.in)")
     for k in keys:
