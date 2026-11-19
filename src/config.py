@@ -1,28 +1,43 @@
-"""Central configuration. Change things here, not inside the other modules."""
+"""All settings in one place. Edit here, not inside the other modules."""
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-RAW_DIR = ROOT / "data" / "raw"
-SYN_DIR = ROOT / "data" / "synthetic"
-MODEL_DIR = ROOT / "models"
-OUT_DIR = ROOT / "output"
+DATA_DIR = ROOT / "data"
+RAW_DIR = DATA_DIR / "raw"                 # downloaded source files (never edited)
+INTERIM_DIR = DATA_DIR / "intermediate"    # filtered / cleaned tables
+PROC_DIR = DATA_DIR / "processed"          # final tables used for analysis
+EXTERNAL_DIR = DATA_DIR / "external"       # weather, soil, MSP ... (later)
+REPORT_DIR = ROOT / "reports" / "data_quality"
+LOG_DIR = ROOT / "logs"
+OUTPUT_DIR = ROOT / "output"               # forecasts (later)
+DISTRICT_MAP = ROOT / "config" / "district_map.csv"
 
-STATE = "Maharashtra"
+# ---- source: third-party copy of Agmarknet "Variety-wise Daily Market Prices" -------------
+HF_REPO_ID = "DHIVAKARNAIDUSUNKARI/mandi-india-daily-prices-2001-2026"
 
-# short name used on the command line -> commodity name exactly as Agmarknet spells it
-COMMODITIES = {
-    "wheat": "Wheat",
-    "maize": "Maize",
-}
+# ---- scope ------------------------------------------------------------------------------
+STATE = "MAHARASHTRA"
+COMMODITIES = ("WHEAT", "MAIZE")
+START_DATE = "2015-01-01"
+END_DATE = "2026-12-31"        # only an upper filter; the panel ends at the last date really observed
 
-# data.gov.in "Current Daily Price of Various Commodities from Various Markets (Mandi)"
-RESOURCE_ID = "9ef84268-d588-465a-a308-a864a43d0070"
-API_URL = f"https://api.data.gov.in/resource/{RESOURCE_ID}"
+# ---- file names -------------------------------------------------------------------------
+RAW_FILTERED = INTERIM_DIR / "maha_wheat_maize_raw.parquet"
+CLEAN_FILE = INTERIM_DIR / "prices_clean.parquet"
+MARKET_DAILY = PROC_DIR / "market_daily.csv"
+DISTRICT_DAILY = PROC_DIR / "district_daily.csv"
+DISTRICT_PANEL = PROC_DIR / "district_panel.csv"
 
-PRICE_COL = "modal_price"   # Rs per quintal (100 kg)
-HORIZON_DAYS = 14           # default forecast length
-TEST_DAYS = 90              # last N days held out for the backtest
-MAX_FFILL_DAYS = 7          # longest gap (holidays / no-arrival days) we forward-fill
-MIN_MARKETS_PER_DAY = 1     # days with fewer reporting mandis are treated as missing
-MIN_HISTORY_DAYS = 300      # refuse to train on less than this
-MAX_DAILY_MOVE = 0.05       # clip any predicted one-day move to +/-5 %
+# ---- validation rules (thresholds are transparent and editable) --------------------------
+# A price is flagged as an outlier when it is below LOW x or above HIGH x the commodity's
+# centred 31-day rolling median (computed across all Maharashtra rows). Flagged rows are KEPT
+# in the clean file; they are only left out of the aggregation.
+OUTLIER_LOW = 0.4
+OUTLIER_HIGH = 2.5
+OUTLIER_WINDOW_DAYS = 31
+
+# A district-commodity series needs at least this many observed days to enter the panel.
+MIN_OBS_DAYS = 365
+
+# Warn if the newest price is older than this many days.
+STALE_WARNING_DAYS = 7

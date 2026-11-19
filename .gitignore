@@ -1,5 +1,13 @@
 venv/
+.venv/
 __pycache__/
 *.pyc
+.ipynb_checkpoints/
 .env
-data/synthetic/
+# large / reproducible data: regenerate with `python -m src.run_pipeline`
+data/raw/*
+data/intermediate/*
+data/processed/*
+data/external/*
+logs/*
+!**/.gitkeep
